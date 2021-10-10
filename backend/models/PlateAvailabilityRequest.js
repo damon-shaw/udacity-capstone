@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../config/database');
 
+/* eslint no-unused-vars: "off" */
 const PlateAvailabilityRequest = db.define('plateAvailabilityRequest', {
     id: {
         type: Sequelize.INTEGER,

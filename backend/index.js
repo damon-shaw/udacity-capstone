@@ -36,7 +36,7 @@ async function connectToDatabase(database) {
         catch(err) {
             console.error(err);
             logger.error(`Failed to connect to the database at ${db.config.host}:${db.config.port}. Waiting, then retrying.`);
-            await new Promise((res, rej) => setTimeout(() => { res() }, 3000));
+            await new Promise((res) => setTimeout(() => { res() }, 3000));
         }
     }
 }

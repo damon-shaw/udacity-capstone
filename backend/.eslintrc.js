@@ -9,5 +9,7 @@ module.exports = {
         "ecmaVersion": 13
     },
     "rules": {
+        "no-async-promise-executor": "off",
+        "no-undef": "off"
     }
 };

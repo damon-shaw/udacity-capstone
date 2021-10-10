@@ -1,12 +1,12 @@
 const db = require('../config/database');
 const Plate = require('../models/Plate');
-const _ = require('lodash');
+// const _ = require('lodash');
 
 const art = require('../lib/AvailabilityRequestThreadpool');
 
 const INTERVAL_MS = 3000;
 
-const supportedStates = Object.keys(require('../searchers'));
+// const supportedStates = Object.keys(require('../searchers'));
 
 db.authenticate().then(() => {
     console.log('Connected to the database.');

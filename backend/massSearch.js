@@ -12,8 +12,6 @@ const targets = [
     { state: 'PA', id: 'PANTHER' },
 ];
 
-const promises = [];
-
 async function main() {
     for(let target of targets) {
         let result = await art.createAvailabilityRequest(target.id, target.state).value;

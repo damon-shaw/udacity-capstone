@@ -1,10 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
-const should = chai.should();
-
-const assert = require('assert');
-
 const app = "http://localhost:3500";
 
 chai.use(chaiHttp);
@@ -91,11 +87,11 @@ describe('PLATES', function() {
             }).timeout(5000);
 
             it('should cache repeated checks for quick retrieval', (done) => {
-                let firstRequestTime, secondRequestTime;
+                // let firstRequestTime, secondRequestTime;
                 chai.request(app)
                     .post(`/check/va/corsair`)
                     .send()
-                    .end((err, res) => {
+                    .end(() => {
                         // console.log(res);
                         done();
                     });

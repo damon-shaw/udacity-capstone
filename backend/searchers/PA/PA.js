@@ -39,7 +39,7 @@ async function checkAvailability(plateID) {
 
 
 
-    rootNode = htmlParse.parse(answerResponse.data);
+    const rootNode = htmlParse.parse(answerResponse.data);
 
     let answerTexts = [
         rootNode.querySelector("#A strong"),

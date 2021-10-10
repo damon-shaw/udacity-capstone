@@ -15,6 +15,7 @@ module.exports = yup.object().shape({
         .required("A state to search within is required.")
         .uppercase()
         .oneOf(
+            /* eslint no-undef: "off" */
             fs.readdirSync(`${__dirname}/../searchers`).map(fname => fname.split('.')[0]),
             "State is not one of the supported states."
         ),
