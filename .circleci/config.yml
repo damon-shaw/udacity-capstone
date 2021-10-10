@@ -126,14 +126,10 @@ jobs:
           name: Back-end build
           command: |
              cd backend
-             npm run build
+             docker build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend/dist
 
   test-frontend:
     docker:
@@ -203,6 +199,22 @@ jobs:
               cd backend
               npm audit --audit-level=critical
 
+  build-and-push:
+      executor: docker/docker
+      steps:
+        - setup_remote_docker
+        - checkout
+        - docker/check
+        - docker/build:
+            image: vanthios/platesearcher
+            path: backend
+        - docker/push:
+            digest-path: /tmp/digest.txt
+            image: vanthios/platesearcher
+        - run:
+            command: |
+              echo "Digest is: $(</tmp/digest.txt)"
+
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli:latest
@@ -261,6 +273,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
+            - .kube
             - project/.circleci/ansible/inventory.txt
             - project/backend_ip_addr.txt
       # Here's where you will add some code to rollback on failure      
