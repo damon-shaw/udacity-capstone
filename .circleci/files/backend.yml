@@ -1,0 +1,40 @@
+Description: >
+  PlateSearcher backend stack.
+
+Parameters:
+  ID:
+    Description: Unique identifier.
+    Type: String
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub platesearcher-${ID}
+      GroupDescription: Allow port 22 and port 3030.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3030
+          ToPort: 3030
+          CidrIp: 0.0.0.0/0
+
+
+
+  KubeCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: platesearcher-k8s-${ID}
+      ResourcesVpcConfig:
+        SubnetIds:
+          - "subnet-4da08b42"
+          - "subnet-f589f892"
+          - "subnet-8deb97a3"
+          - "subnet-4338bd7d"
+          - "subnet-a49796ee"
+          - "subnet-09fc8e55"
+        RoleArn:
+          - "arn:aws:iam::930437881429:role/eksClusterRole"

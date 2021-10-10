@@ -1,0 +1,35 @@
+{
+  "name": "platesearch-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js > log.txt"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "bull": "^3.22.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^4.5.0",
+    "http-status-codes": "^1.4.0",
+    "moment": "^2.29.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
+    "nanoid": "^3.1.22",
+    "node-html-parser": "^3.1.6",
+    "querystring": "^0.2.1",
+    "sequelize": "^6.6.2",
+    "winston": "^3.3.3",
+    "yup": "^0.29.3"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.3.2",
+    "request": "^2.88.2"
+  }
+}

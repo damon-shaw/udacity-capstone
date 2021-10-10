@@ -1,0 +1,486 @@
+version: 2.1
+
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end CloudFormation stacks given a workflow ID.
+    parameters:
+      # Add a parameter to control when this job runs. If we don't it's kind of confusing to call
+      # a "destroy environment" step after creating or configuring the environment.
+      run_when:
+        type: string
+        description: "The state that the job should be in for this command to run."
+    steps:
+      - run:
+          name: "Delete the front-end files"
+          when: << parameters.run_when >>
+          command: |
+            aws s3 rm "s3://platesearcher-${CIRCLE_WORKFLOW_ID}" --recursive
+      - run:
+          name: Destroy the back-end stack
+          when: << parameters.run_when >>
+          command: |
+            aws cloudformation delete-stack \
+              --stack-name "platesearcher-backend-${CIRCLE_WORKFLOW_ID}"
+      - run:
+          name: Destroy the front-end stack
+          when: << parameters.run_when >>
+          command: |
+            aws cloudformation delete-stack \
+              --stack-name "platesearcher-frontend-${CIRCLE_WORKFLOW_ID}"
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      run_when:
+        type: string
+        description: "The state that the job should be in for this command to run."
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Revert migrations
+          # Add when this will run
+          when: << parameters.run_when >>
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            cd backend
+            if grep -q "SUCCESSFUL" database_migration_status.txt
+            then
+              echo "Reverting migrations..."
+              npm run migrations:revert
+            fi
+            
+jobs:
+
+  lint-frontend:
+    docker:
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore the front-end
+      - run:
+          name: Lint front-end
+          command: |
+            cd frontend
+            npm ci
+            npm run lint
+      - save_cache:
+          paths: [ frontend/node_modules ]
+          key: frontend-build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/frontend/node_modules
+
+  lint-backend:
+    docker:
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore the back-end
+      - run:
+          name: Lint back-end
+          command: |
+            cd backend
+            npm ci
+            npm run lint
+      - save_cache:
+          paths: [ backend/node_modules ]
+          key: backend-build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend/node_modules
+
+  build-frontend:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [ frontend-build ]
+      - run:
+          name: Build front-end
+          command: |
+            # Your code here
+            cd frontend
+            npm run build
+      - save_cache:
+          paths: [ frontend/node_modules ]
+          key: frontend-build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/frontend/dist
+
+  build-backend:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Back-end build
+          command: |
+             cd backend
+             npm run build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend/dist
+
+  test-frontend:
+    docker:
+      # Docker image here
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [frontend-build]
+      # Your job code here
+      - run:
+          name: Front-end Test
+          command: |
+              cd frontend
+              npm run test
+                
+  test-backend:
+    docker:
+      # Docker image here
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [backend-build]
+      # Your job code here
+      - run:
+          name: Back-end Test
+          command: |
+              cd backend
+              npm run test
+            
+  scan-frontend:
+    docker:
+      # Docker image here
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [frontend-build]
+      # Your job code here
+      - run:
+          name: Front-end Scan
+          command: |
+              cd frontend
+              npm audit --audit-level=critical
+
+  scan-backend:
+    docker:
+      # Docker image here
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [backend-build]
+      # Your job code here
+      - run:
+          name: Back-end Scan
+          command: |
+              cd backend
+              npm audit --audit-level=critical
+
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - run:
+          name: Install Required Software
+          command: |
+              curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+              chmod +x ./kubectl
+              curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+              mv /tmp/eksctl .
+              chmod +x ./eksctl
+              ./eksctl version
+              yum install -y git
+              yum install -y tar
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            eksctl create cluster \
+              --name platesearcher-cluster-${CIRCLE_WORKFLOW_ID} \
+              --region us-east-1 \
+              --with-oidc \
+              --ssh-access \
+              --ssh-public-key platesearcher
+      # - run:
+      #     name: Get Back-end IP Address
+      #     command: |
+      #       aws ec2 describe-instances \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --filters "Name=tag:project,Values=platesearcher-backend-${CIRCLE_WORKFLOW_ID}" \
+      #         --output text > backend_ip_addr.txt
+      #       BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
+      #       echo "Back-end IP Address is $BACKEND_IP_ADDR"
+      #       if [[ -z "$BACKEND_IP_ADDR" ]]; then
+      #         exit 1
+      #       fi
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=platesearcher-frontend-${CIRCLE_WORKFLOW_ID} \
+              --stack-name "platesearcher-frontend-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            # Make sure to go to the directory with the existing Ansible playbook. We need the
+            # existing [web] section, not just the IP address.
+            BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
+            cd .circleci/ansible
+            echo $BACKEND_IP_ADDR >> inventory.txt
+            cat inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+            - project/backend_ip_addr.txt
+      # Here's where you will add some code to rollback on failure      
+      - destroy-environment:
+          run_when: on_fail
+
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: circleci/node
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
+            export API_URL="http://${BACKEND_IP_ADDR}:3030"
+            echo "${API_URL}"
+            # Build the application in production mode.
+            cd frontend
+            npm run build:prod
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            # Copy the build products to the S3 bucket.
+            # The CloudFormation script provided uses "platesearcher-${ID}".
+            aws s3 cp --recursive dist "s3://platesearcher-${CIRCLE_WORKFLOW_ID}"
+      # Here's where you will add some code to rollback on failure
+      - revert-migrations:
+          run_when: on_fail
+      - destroy-environment:
+          run_when: on_fail   
+                    
+  deploy-backend:
+    docker:
+      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: ["1e:ac:b5:e1:f4:7d:9b:bf:86:42:e5:dd:b2:61:9c:77"]
+      # attach workspace
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible curl
+            apk add --update rsync openssh
+            # Install NodeJS and NPM in case we need to revert migrations.
+            apk add --update nodejs npm
+            # Install AWS CLI through pip. Doing this through cURL doesn't work well.
+            pip install awscli
+            aws --version
+      - run:
+          name: Deploy backend
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      # Here's where you will add some code to rollback on failure  
+      # - revert-migrations:
+      #     run_when: on_fail
+      # - destroy-environment:
+      #     run_when: on_fail 
+
+  smoke-test:
+    docker:
+      # Lightweight Docker image 
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible curl
+            apk add --update rsync openssh
+            # Install NodeJS and NPM in case we need to revert migrations.
+            apk add --update nodejs npm
+            # Install AWS CLI through pip. Doing this through cURL doesn't work well.
+            pip install awscli
+            aws --version
+      - run:
+          name: Backend smoke test.
+          command: |
+            BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
+            curl "http://$BACKEND_IP_ADDR:3030/api/status"
+      - run:
+          name: Frontend smoke test.
+          command: |
+            URL="http://platesearcher-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"
+            curl -s ${URL} | grep "Welcome"
+      # Here's where you will add some code to rollback on failure
+      - revert-migrations:
+          run_when: on_fail
+      - destroy-environment:
+          run_when: on_fail  
+
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli:latest
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            yum install -y git
+            yum install -y tar
+      - checkout
+      - run:
+          # Get the existing production workflow ID here. If we deploy a new one it makes it harder
+          # to find the original.
+          name: Get Existing Production Workflow ID
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            echo $OldWorkflowID > old_workflow_id.txt
+            cat old_workflow_id.txt
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+              --template-file ./.circleci/files/cloudfront.yml \
+              --stack-name platesearcher-production \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}" \
+              --tags project=platesearcher
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/old_workflow_id.txt
+
+      # Here's where you will add some code to rollback on failure
+      - revert-migrations:
+          run_when: on_fail
+      - destroy-environment:
+          run_when: on_fail  
+
+  cleanup:
+    docker:
+      # Docker image here
+      - image: amazon/aws-cli:latest
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            yum install -y git
+            yum install -y tar
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=`cat old_workflow_id.txt`
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ ! -z "${OldWorkflowID}" ]] && [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              aws s3 rm "s3://platesearcher-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "platesearcher-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "platesearcher-frontend-${OldWorkflowID}"
+            fi
+            
+
+workflows:
+  default:
+    jobs:
+      - lint-frontend
+      - lint-backend
+      - build-frontend:
+          requires: [lint-frontend]
+      - build-backend:
+          requires: [lint-backend]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]

@@ -1,0 +1,19 @@
+# Include a load balancer so the service can be exposed to the Internet.
+# "To access the service from outside the cluster, deploy a network load balancer or
+# ALB Ingress Controller."
+# https://docs.aws.amazon.com/eks/latest/userguide/sample-deployment.html
+# https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
+apiVersion: v1
+kind: Service
+metadata:
+  name: platesearcher
+  labels:
+    name: platesearcher
+spec:
+  selector:
+    app: platesearcher
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP

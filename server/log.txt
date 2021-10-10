@@ -1,0 +1,90 @@
+Database connected!
+Server is listening on port 3500.
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: true },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=true 200 675 - 204.670 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: true },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=true 200 676 - 17.665 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: false },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=false 200 675 - 19.492 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: true },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=true 200 670 - 18.577 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: true },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=true 200 673 - 25.473 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: false },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=false 200 681 - 18.502 ms
+Looking up in the database.
+{ order: Fn { fn: 'RAND', args: [] }, limit: 9 }
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9 200 674 - 26.349 ms
+Looking up in the database.
+{ order: Fn { fn: 'RAND', args: [] }, limit: 9 }
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9 200 673 - 28.823 ms
+Looking up in the database.
+{ order: Fn { fn: 'RAND', args: [] }, limit: 9 }
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9 200 678 - 23.242 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: true },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=true 200 670 - 20.267 ms
+Looking up in the database.
+{
+  order: Fn { fn: 'RAND', args: [] },
+  where: { available: false },
+  limit: 9
+}
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9&available=false 200 680 - 17.800 ms
+Looking up in the database.
+{ order: Fn { fn: 'RAND', args: [] }, limit: 9 }
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9 200 676 - 20.701 ms
+{}
+POST /batch/plate 200 2 - 2.776 ms
+{}
+POST /batch/plate 200 2 - 2.605 ms
+Looking up in the database.
+{ order: Fn { fn: 'RAND', args: [] }, limit: 9 }
+Returning [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+GET /random?limit=9 200 675 - 23.094 ms
