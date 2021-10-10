@@ -5,8 +5,8 @@ import { AllowableCharacters } from '../models/allowable-characters.model';
 
 import { environment } from 'src/environments/environment';
 
-const STATE_KEY: string = "STATE";
-const ALLOWABLE_CHARS_KEY: string = "ALLOWABLE_CHARS";
+const STATE_KEY: string = 'STATE';
+const ALLOWABLE_CHARS_KEY: string = 'ALLOWABLE_CHARS';
 
 export interface State {
     name: string;
@@ -33,7 +33,7 @@ export class ConfigService {
         else
             this.selectedState = localStorage.getItem(STATE_KEY);
 
-        console.log("Starting the configuration service!");
+        console.log('Starting the configuration service!');
     }
 
     public setState(state: string): void {

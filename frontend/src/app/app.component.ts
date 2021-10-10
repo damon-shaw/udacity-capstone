@@ -13,7 +13,7 @@ export class AppComponent {
   constructor() {}
 
   public toggleMobileNavbarCollapsed(): void {
-      console.log("Toggling the navbar!");
+      console.log('Toggling the navbar!');
       this.isCollapsed = !this.isCollapsed;
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PlateService } from '../../services/plate.service';
-import { FavoriteService } from '../../services/favorite.service'; 
+import { FavoriteService } from '../../services/favorite.service';
 import { Plate } from 'src/app/models/plate.model';
 import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from 'src/app/services/config.service';

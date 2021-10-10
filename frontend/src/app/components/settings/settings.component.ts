@@ -27,7 +27,7 @@ export class SettingsComponent implements OnInit {
                 return {
                     label: el.name,
                     value: el.abbreviation
-                }
+                };
             });
 
             console.log(this.dropdownOptions);
@@ -39,7 +39,7 @@ export class SettingsComponent implements OnInit {
     }
 
     public handleStateSelected(event: any): void {
-        console.log("Changing the configured state!");
+        console.log('Changing the configured state!');
         this._ecs.setState(event.value);
     }
 

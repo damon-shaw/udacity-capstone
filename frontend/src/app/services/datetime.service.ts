@@ -10,7 +10,7 @@ export class DatetimeService {
   constructor() { }
 
   public longDatetime(datetime: string): string {
-    return moment(datetime).format("MMM Do YYYY, h:mm A")
+    return moment(datetime).format('MMM Do YYYY, h:mm A');
   }
 
 

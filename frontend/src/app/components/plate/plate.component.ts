@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PlateService } from '../../services/plate.service';
-import { FavoriteService } from '../../services/favorite.service'; 
+import { FavoriteService } from '../../services/favorite.service';
 import { DatetimeService } from '../../services/datetime.service';
 import { Plate } from 'src/app/models/plate.model';
 

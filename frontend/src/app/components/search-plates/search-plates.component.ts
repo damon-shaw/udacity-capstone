@@ -102,7 +102,7 @@ export class SearchPlatesComponent implements OnInit {
         }
         finally {
             console.log(this.plates);
-            this.isSearching = false; 
+            this.isSearching = false;
         }
     }
 
@@ -114,7 +114,7 @@ export class SearchPlatesComponent implements OnInit {
         try {
             await this._ps.getAvailability(this.searchValue, this._cfs.getState());
 
-            console.log("Search value is", this.searchValue);
+            console.log('Search value is', this.searchValue);
 
             // After we've done that, do another search for the query as
             // it should include the newly checked plate.

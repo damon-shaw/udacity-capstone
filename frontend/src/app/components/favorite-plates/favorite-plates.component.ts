@@ -23,7 +23,7 @@ export class FavoritePlatesComponent implements OnInit {
     const platesToFind = this._fs.getFavorites();
     const selectedState = this._cfs.getState();
 
-    console.log("Favorites are ", platesToFind);
+    console.log('Favorites are ', platesToFind);
 
     this._ps.batchSearchById(platesToFind, selectedState).then((plates: Plate[]) => {
       this.plates = plates.map(plate => {

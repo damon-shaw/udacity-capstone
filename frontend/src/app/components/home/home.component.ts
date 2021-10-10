@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-    public donateUrl: string = "https://www.paypal.com/donate/?hosted_button_id=JNXHFT9F6FUUJ";
+    public donateUrl: string = 'https://www.paypal.com/donate/?hosted_button_id=JNXHFT9F6FUUJ';
 
     constructor() { }
 
@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
     }
 
     public handleDonateClick(): void {
-        window.open(this.donateUrl, "_blank");
+        window.open(this.donateUrl, '_blank');
     }
 
 }

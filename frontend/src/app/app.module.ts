@@ -61,7 +61,7 @@ import { NoneFoundBannerComponent } from './components/none-found-banner/none-fo
       AppComponent,
       {
           provide: APP_INITIALIZER,
-          useFactory: (service: ConfigService) => function() { return service.init(); },
+          useFactory: (service: ConfigService) => service.init(),
           deps: [ConfigService],
           multi: true
       }
