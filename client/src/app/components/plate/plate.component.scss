@@ -1,0 +1,163 @@
+
+:host {
+    // Variables related to this component's styling.
+    --plate-ratio: 0.509915;
+    --desktop-plate-size: 26;
+
+    margin: auto;
+
+    .wrapper {
+        width: fit-content;
+
+        margin: auto;
+        padding: 1em 1em 0.5em 1em;
+
+        background-color: var(--surface-e);
+        border-radius: 0.5em;
+
+        font-family: monospace;
+        font-weight: bold;
+    }
+
+    .plate {
+        width: 353px;
+        height: 180px;
+        max-width: 100%;
+        background-repeat: no-repeat;
+
+        .text {
+            display: block;
+        }
+
+        &.VA {
+            background-image: url("/assets/images/VA.png");
+            background-size: 100% 100%;
+
+            .text {
+                color: #100094;
+                padding-top: 0.5em;
+
+                font-size: 4.0em;
+                font-family: serif;
+                text-align: center;
+                font-weight: 400;
+                letter-spacing: 3px;
+
+                text-shadow: -0.5px 0 white, 0 0.5px white, 0.5px 0 white, 0 -0.5px white;
+                transform: scaleY(1.7);
+            }
+        }
+
+        &.PA {
+            background-image: url("/assets/images/PA.png");
+            background-size: 100% 100%;
+
+            .text {
+                color: #1b4b73;
+                font-family: 'LicensePlate';
+
+                font-size: 6.0em;
+                text-align: center;
+                font-weight: 400;
+                letter-spacing: -1px;
+
+                padding-top: 0.25em;
+            }
+        }
+    }
+
+    .availability-panel {
+        margin-top: 0.5em;
+        text-align: center;
+
+        font-size: 1.2em;
+        font-weight: bold;
+        color: var(--text-color-secondary);
+
+        i {
+            font-weight: bold;
+        }
+
+        ::ng-deep .p-progress-spinner {
+            height: 1.2em;
+            width: 1.2em;
+
+            margin-top: 0.1em;
+            display: block;
+
+            circle {
+                stroke: var(--text-color-secondary) !important;
+            }
+        }
+    }
+
+    .favorited {
+        color: red;
+    }
+
+    @media screen and (min-width: 992px) {
+        .plate {
+
+            &[class~="VA" i] {
+                width: calc(var(--desktop-plate-size) * 1vw);
+                height: calc(0.51vw * var(--desktop-plate-size));
+                max-width: 500px;
+                max-height: calc(var(--plate-ratio) * 500px);
+                background-image: url("/assets/images/VA.png");
+                background-size: 100% 100%;
+
+                .text {
+                    padding-top: 0.55em;
+
+                    transform: scaleY(1.7);
+
+                    font-size: calc(0.18vw * var(--desktop-plate-size));
+                    font-family: serif;
+                    text-align: center;
+                    font-weight: 400;
+                    letter-spacing: 3px;
+                }
+            }
+
+            &[class~="PA" i] {
+                width: calc(var(--desktop-plate-size) * 1vw);
+                height: calc(0.51vw * var(--desktop-plate-size));
+                max-width: 500px;
+                max-height: calc(var(--plate-ratio) * 500px);
+                background-image: url("/assets/images/PA.png");
+                background-size: 100% 100%;
+
+                .text {
+                    padding-top: 0.60em;
+                    font-family: 'LicensePlate';
+    
+                    transform: scale(1.5, 1.6);
+
+                    font-size: calc(0.18vw * var(--desktop-plate-size));
+                    text-align: center;
+                    font-weight: 400;
+                    letter-spacing: -1px;
+                }
+            }
+        }
+    }
+
+    @media screen and (min-width: 1920px) {
+        .plate {
+
+            &[class~="VA" i] {
+                .text {
+                    font-size: 90px;
+                }
+            }
+            
+            &[class~="PA" i] {
+                .text {
+                    font-size: 90px;
+                }
+            }
+        }
+    }
+
+
+}

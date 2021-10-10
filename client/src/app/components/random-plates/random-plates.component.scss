@@ -1,0 +1,36 @@
+:host {
+
+    .component-container {
+        width: 100%;
+    }
+
+    .grid-item-container {
+        background-color: #1D1B28;
+        padding-bottom: 0.5em;
+        border-radius: 0.5em;
+
+        font-family: monospace;
+        font-weight: bold;
+
+        .availability-panel {
+            margin-top: 0.5em;
+            text-align: center;
+
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #b2afbb;
+
+            i {
+                font-weight: bold;
+            }
+        }
+    }
+
+    .none-found-banner {
+        
+    }
+
+    .favorited {
+        color: red;
+    }
+}

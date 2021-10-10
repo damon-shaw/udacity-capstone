@@ -1,0 +1,19 @@
+:host {
+
+    .h-center {
+        margin: 0 auto; 
+
+        .container {
+            color: rgba(255, 255, 255, 0.75);
+
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
+
+            border-radius: 0.25em;
+    
+            background-color: var(--surface-d);
+        }
+    }
+
+
+}

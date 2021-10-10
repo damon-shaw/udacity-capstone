@@ -1,0 +1,17 @@
+:host {
+    text-align: center;
+    
+    .none-found-container {
+        padding: 1em;
+        border-radius: 0.5em;
+        background-color: #1F2D40;
+        color: var(--text-color);
+
+        .none-found-message {
+            .search-value {
+                font-family: 'Courier New', Courier, monospace;
+                text-transform: uppercase;
+            }
+        }
+    }
+}

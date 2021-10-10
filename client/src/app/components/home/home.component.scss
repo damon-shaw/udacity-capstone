@@ -1,0 +1,23 @@
+:host {
+    div[class^="p-col-"] .container {
+
+        height: 100%;
+
+        padding-top: 1.0em;
+
+        color: var(--text-color-secondary);
+        background-color: var(--surface-d);
+
+        border-radius: 0.25em;
+
+        p {
+            font-size: 1.2em;
+
+            text-align: justify;
+        }
+
+        .donate-container {
+            text-align: center;
+        }
+    }
+}

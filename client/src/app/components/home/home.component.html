@@ -1,0 +1,63 @@
+
+
+
+<div class="p-grid">
+
+    <div class="p-col-1"></div>
+
+    <div class="p-col-12 p-lg-8 p-md-12 p-sm-12">
+        <div class="container">
+            <h3>Welcome to the Virginia PlateSearch Tool!</h3>
+
+            <p>
+                This is a tool I built in my free time to make searching for a custom
+                license plate easier. As of August 2020, the Virginia DMV website was
+                slow and hard to work with.
+            </p>
+
+            <p>
+                This tool started as a simple script that would submit the completed form to the
+                DMV site. I was looking for a full seven letter word that was available in its
+                normal spelling (MYPLATE vs MYPL4T3). While the script was fast at putting together
+                the request, the Virginia DMV site was still slow. To resolve this, I created my
+                own database, and automated requests for thousands of words.
+                With my own database I could query for specific plates, query for plates that
+                included words, or view random available plates. 
+            </p>
+
+            <p>
+                I didn't want the database to only hold the plates from the wordlist the automated
+                tool referenced, though, so this site is capable of searching for <i>new</i>
+                plates. Also, as a proxy to the actual Virginia DMV database, this site is not the
+                authority on what's available at what isn't. As such, the ability to check a plate's
+                availability was a critical feature.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="p-col-12 p-lg-2 p-md-12 p-sm-12">
+
+        <div class="container">
+            <div class="donate-container">
+                <button pButton
+                    label="Donate"
+                    icon="pi pi-dollar"
+                    class="full-width"
+                    (click)="handleDonateClick()"
+                >
+
+                </button>
+            </div>
+            <p>
+                Running this website is not free. If you've found this site useful, please consider
+                donating. All donations greatly help with hosting costs. Even $5 covers almost a
+                month of hosting.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="p-col-1"></div>
+
+</div>

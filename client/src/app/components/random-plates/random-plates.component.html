@@ -1,0 +1,15 @@
+<div class="component-container">
+    <div class="p-grid p-jc-center">
+
+        <ng-container *ngIf="plates">
+            <div class="p-col-12 p-lg-4 p-md-6 p-sm-12 plate-container" *ngFor="let plate of plates">
+                <app-plate [plate]="plate"></app-plate>
+            </div>
+        </ng-container>
+    
+        <div class="p-col-8 none-found-banner" *ngIf="plates && plates.length === 0">
+            <app-none-found-banner></app-none-found-banner>
+        </div>
+    
+    </div>
+</div>

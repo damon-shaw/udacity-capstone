@@ -1,0 +1,82 @@
+<div class="p-grid">
+
+    <div class="p-col-12">
+        <form [formGroup]="form">
+            <div class="p-grid search-container p-ai-center vertical-container">
+                <div class="p-col-12 p-lg-3 p-md-3 p-sm-12">
+                    <p-dropdown
+                        [options]="searchTypeOptions"
+                        formControlName="searchType"
+                    ></p-dropdown>
+                </div>
+                <div class="p-col-12 p-lg-7 p-md-7 p-sm-12">
+                    <p-autoComplete
+                        formControlName="searchValue"
+                        [suggestions]="plates"
+                        [pKeyFilter]="allowableCharacters"
+                        maxlength=8
+                        field="id"
+                        (completeMethod)="getAutocompleteOptions()"
+                    ></p-autoComplete>
+                </div>
+                <div class="p-col-12 p-lg-2 p-md-2 p-sm-12">
+                    <div class="checkbox-container horiztonal-align p-field-checkbox">
+                        <p-triStateCheckbox
+                            formControlName="isAvailable"
+                        ></p-triStateCheckbox>
+                        <label>Available?</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <ng-container [ngSwitch]="isSearchEmpty()">
+
+        <ng-container *ngSwitchCase="true">
+            <div class="p-col-12 none-found-banner">
+                <div class="p-grid">
+                    <div class="p-col-1 p-lg-3 p-md-2 p-sm-1"></div>
+                    <div class="p-col-10 p-lg-6 p-md-8 p-sm-10 none-found-container">
+                        <div class="none-found-message">
+                            <span>
+                                We didn't find any plates that met this criteria.
+                                To check if
+                            </span>
+                            <span class="search-value">
+                                &nbsp;{{ searchValue }}
+                            </span>
+                            <span>
+                                is available, click the search button below. 
+                            </span>
+                        </div>
+                        <div class="none-found-button-container">
+                            <p-button
+                                label="Search"
+                                icon="pi pi-search"
+                                (onClick)="checkAvailability()"
+                            >
+                            </p-button>
+                        </div>
+                        <p-progressBar mode="indeterminate" *ngIf="isChecking"></p-progressBar>
+                    </div>
+                    <div class="p-col-1 p-lg-3 p-md-2 p-sm-1"></div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="false">
+            <div class="p-col-3 p-lg-4 p-md-6 p-sm-12 plate-container" *ngFor="let plate of plates">
+                <app-plate [plate]="plate"></app-plate>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+    
+  </div>
+
+  <p-dialog header="Error" [(visible)]="errorModalVisible">
+      {{ errorText }}
+  </p-dialog>

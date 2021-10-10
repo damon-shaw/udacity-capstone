@@ -1,0 +1,67 @@
+:host {
+    .search-container {
+        padding: 0.5em 0.75em 0.5em 0.75em;
+
+        background-color: var(--surface-d);
+        border-radius: 0.35em;
+
+        ::ng-deep .p-dropdown {
+            width: 100%;
+        }
+
+        ::ng-deep .p-dropdown .p-dropdown-label {
+            text-align: center;
+        }
+
+        ::ng-deep .p-autocomplete, ::ng-deep .p-autocomplete-input {
+            width: 100%;
+        }
+
+        .p-field-checkbox {
+            color: var(--text-color);
+        }
+
+        ::ng-deep .checkbox-container {
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .horizontal-align {
+            margin: auto 0;
+        }
+
+        ::ng-deep label {
+            margin-bottom: 0em;
+        }
+    }
+
+    .none-found-banner {
+        margin-top: 1em;
+        
+        .none-found-container {
+            padding: 1em;
+            border-radius: 0.5em;
+            background-color: #1F2D40;
+            color: var(--text-color);
+
+            .none-found-message {
+                .search-value {
+                    font-family: 'Courier New', Courier, monospace;
+                    text-transform: uppercase;
+                }
+            }
+
+            .none-found-button-container {
+                margin-top: 1.0em;
+
+                ::ng-deep .p-button {
+                    width: 100%;
+                }
+            }
+
+            ::ng-deep .p-progressbar {
+                margin-top: 1em;
+            }
+        }
+    }
+}

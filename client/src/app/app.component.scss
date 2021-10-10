@@ -1,0 +1,36 @@
+:host {
+    height: 100vh;
+    width: 100vw;
+
+    ::ng-deep .full-width {
+        &.p-button {
+            width: 100%;
+        }
+    }
+
+    .bg-dark {
+        background-color: var(--surface-a) !important;
+    }
+    
+    .nav-link {
+        color: var(--text-color-secondary)
+    }
+
+    .navbar-toggle {
+        background-color: var(--surface-b);
+
+        border: 1px solid var(--surface-d);
+    }
+
+    @media screen and (min-width: 576px) {
+        .navbar-toggle {
+            display: none;
+        }
+    }
+
+    ::ng-deep .p-grid {
+        margin-left: 0em;
+        margin-right: 0em;
+        margin-top: 0em;
+    }
+}
