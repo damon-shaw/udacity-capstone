@@ -462,7 +462,7 @@ workflows:
       - build-and-push-backend:
           requires: [scan-backend]
       - deploy-infrastructure:
-          requires: [test-backend, scan-frontend, scan-backend]
+          requires: [scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
