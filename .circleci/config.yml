@@ -23,7 +23,7 @@ commands:
           when: << parameters.run_when >>
           command: |
             aws cloudformation delete-stack \
-              --stack-name "platesearcher-backend-${CIRCLE_WORKFLOW_ID}"
+              --stack-name "eksctl-platesearcher-cluster-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Destroy the front-end stack
           when: << parameters.run_when >>
@@ -249,16 +249,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=platesearcher-frontend-${CIRCLE_WORKFLOW_ID} \
               --stack-name "platesearcher-frontend-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            # Make sure to go to the directory with the existing Ansible playbook. We need the
-            # existing [web] section, not just the IP address.
-            BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
-            cd .circleci/ansible
-            echo $BACKEND_IP_ADDR >> inventory.txt
-            cat inventory.txt
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
       - persist_to_workspace:
           root: ~/
           paths:
@@ -309,22 +300,24 @@ jobs:
                     
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
-      - image: python:3.7-alpine3.11
+      - image: circleci/node
     steps:
       # Checkout code from git
       - checkout
-      # Add ssh keys with fingerprint
-      - add_ssh_keys:
-          fingerprints: ["1e:ac:b5:e1:f4:7d:9b:bf:86:42:e5:dd:b2:61:9c:77"]
-      # attach workspace
       - attach_workspace:
           at: ~/
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible curl
-            apk add --update rsync openssh
+
+            curl -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+            chmod +x /usr/local/bin/kubectl
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            mv /tmp/eksctl /usr/local/bin/eksctl
+            chmod +x /usr/local/bin/eksctl
+            eksctl version
+            kubectl version --short --client
+
             # Install NodeJS and NPM in case we need to revert migrations.
             apk add --update nodejs npm
             # Install AWS CLI through pip. Doing this through cURL doesn't work well.
@@ -333,8 +326,9 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            kubectl get nodes -o wide
+            kubectl apply -f .circleci/files/k8s-service.yml
+            kubectl apply -f .circleci/files/k8s-api-deployment.yml
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail

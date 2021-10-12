@@ -21,7 +21,7 @@ spec:
         app: platesearcher
     spec:
       containers:
-        - image: hub.docker.com/vanthios/platesearcher:latest
+        - image: docker.io/vanthios/platesearcher:latest
           name: platesearcher-service
           ports:
             - containerPort: 3030
