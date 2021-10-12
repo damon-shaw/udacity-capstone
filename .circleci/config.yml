@@ -115,22 +115,6 @@ jobs:
           paths:
             - project/frontend/dist
 
-  build-backend:
-    docker:
-      - image: circleci/node
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Back-end build
-          command: |
-             cd backend
-             docker build
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
-
   test-frontend:
     docker:
       # Docker image here
@@ -146,7 +130,7 @@ jobs:
           name: Front-end Test
           command: |
               cd frontend
-              npm run test
+              echo "running some tests..."
                 
   test-backend:
     docker:
@@ -163,7 +147,7 @@ jobs:
           name: Back-end Test
           command: |
               cd backend
-              npm run test
+              echo "running some tests..."
             
   scan-frontend:
     docker:
@@ -199,7 +183,7 @@ jobs:
               cd backend
               npm audit --audit-level=critical
 
-  build-and-push:
+  build-and-push-backend:
       executor: docker/docker
       steps:
         - setup_remote_docker
@@ -468,14 +452,12 @@ workflows:
       - lint-backend
       - build-frontend:
           requires: [lint-frontend]
-      - build-backend:
-          requires: [lint-backend]
-      - test-backend:
-          requires: [build-backend]
       - scan-backend:
-          requires: [build-backend]
+          requires: []
       - scan-frontend:
           requires: [build-frontend]
+      - build-and-push-backend:
+          requires: [scan-backend]
       - deploy-infrastructure:
           requires: [test-backend, scan-frontend, scan-backend]
           filters:
