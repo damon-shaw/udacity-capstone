@@ -254,8 +254,6 @@ jobs:
           root: ~/
           paths:
             - .kube
-            - project/.circleci/ansible/inventory.txt
-            - project/backend_ip_addr.txt
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           run_when: on_fail
