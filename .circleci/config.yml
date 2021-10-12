@@ -210,14 +210,14 @@ jobs:
       - run:
           name: Install Required Software
           command: |
+              yum install -y git
+              yum install -y tar
               curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
               chmod +x ./kubectl
               curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
               mv /tmp/eksctl .
               chmod +x ./eksctl
               ./eksctl version
-              yum install -y git
-              yum install -y tar
       # Checkout code from git
       - checkout
       - run:
