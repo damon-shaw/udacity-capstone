@@ -195,6 +195,7 @@ jobs:
         - docker/build:
             image: vanthios/platesearcher
             path: backend
+            docker-context: backend
         - docker/push:
             digest-path: /tmp/digest.txt
             image: vanthios/platesearcher
