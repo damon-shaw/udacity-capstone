@@ -8,6 +8,7 @@ RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
 COPY --chown=node:node . .
+RUN ls
 
 RUN npm install
 

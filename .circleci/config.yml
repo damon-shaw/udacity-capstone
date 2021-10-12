@@ -456,13 +456,13 @@ workflows:
       - build-frontend:
           requires: [lint-frontend]
       - scan-backend:
-          requires: []
+          requires: [lint-backend]
       - scan-frontend:
           requires: [build-frontend]
       - build-and-push-backend:
           requires: [scan-backend]
       - deploy-infrastructure:
-          requires: [scan-frontend, scan-backend]
+          requires: [build-and-push-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
