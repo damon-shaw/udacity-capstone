@@ -22,18 +22,7 @@ commands:
           name: Destroy the back-end stack
           when: << parameters.run_when >>
           command: |
-            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-
-            for STACK in $STACKS
-            do
-              echo $STACK
-              if [[ "${STACK}" =~ "${CIRCLE_WORKFLOW_ID}" ]]
-              then
-                echo "This stack is part of the current pipeline. Deleting it."
-                aws cloudformation delete-stack --stack-name $STACK
-              fi
-            done
+            eksctl delete cluster --name=platesearcher-cluster-${CIRCLE_WORKFLOW_ID}
       - run:
           name: Destroy the front-end stack
           when: << parameters.run_when >>
@@ -308,7 +297,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: circleci/node
+      - image: amazon/aws-cli:latest
     steps:
       # Checkout code from git
       - checkout
@@ -317,7 +306,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-
+            yum install -y git
+            yum install -y tar
             curl -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
             chmod +x /usr/local/bin/kubectl
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
@@ -325,12 +315,6 @@ jobs:
             chmod +x /usr/local/bin/eksctl
             eksctl version
             kubectl version --short --client
-
-            # Install NodeJS and NPM in case we need to revert migrations.
-            apk add --update nodejs npm
-            # Install AWS CLI through pip. Doing this through cURL doesn't work well.
-            pip install awscli
-            aws --version
       - run:
           name: Deploy backend
           command: |
@@ -470,9 +454,9 @@ workflows:
           filters:
             branches:
               only: [master]
-      - deploy-frontend:
-          requires: [deploy-infrastructure]
       - deploy-backend:
+          requires: [deploy-infrastructure]
+      - deploy-frontend:
           requires: [deploy-infrastructure]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
