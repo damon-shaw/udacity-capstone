@@ -319,7 +319,7 @@ jobs:
           name: Deploy backend
           command: |
             kubectl get nodes -o wide
-            kubectl apply -f project/.circleci/files/k8s-service.yml
+            kubectl apply -f project/.circleci/files/k8s-lb-service.yml
             kubectl apply -f project/.circleci/files/k8s-api-deployment.yml
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
