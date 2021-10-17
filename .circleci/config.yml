@@ -275,10 +275,6 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            # your code here
-            BACKEND_IP_ADDR=`cat backend_ip_addr.txt`
-            export API_URL="http://${BACKEND_IP_ADDR}:3030"
-            echo "${API_URL}"
             # Build the application in production mode.
             cd frontend
             npm run build:prod
@@ -321,6 +317,7 @@ jobs:
             kubectl get nodes -o wide
             kubectl apply -f .circleci/files/k8s-lb-service.yml
             kubectl apply -f .circleci/files/k8s-api-deployment.yml
+            kubectl get nodes -o wide
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
