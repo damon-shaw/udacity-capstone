@@ -1,15 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: platesearcher
+  name: platesearcher-api
+  namespace: platesearcher
   labels:
-    app: platesearcher
+    app: platesearcher-api
 
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: platesearcher
+      app: platesearcher-api
   strategy:
     rollingUpdate:
       maxSurge: 40%
@@ -18,11 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        app: platesearcher
+        app: platesearcher-api
     spec:
       containers:
         - image: docker.io/vanthios/platesearcher:latest
-          name: platesearcher-service
+          name: platesearcher-api
           ports:
             - containerPort: 3030
               name: rest-api

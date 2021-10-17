@@ -315,9 +315,10 @@ jobs:
           name: Deploy backend
           command: |
             kubectl get nodes -o wide
+            kubectl create namespace platesearcher
             kubectl apply -f .circleci/files/k8s-lb-service.yml
             kubectl apply -f .circleci/files/k8s-api-deployment.yml
-            kubectl get nodes -o wide
+            kubectl get all -n platesearcher
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
