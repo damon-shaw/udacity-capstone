@@ -15,6 +15,6 @@ spec:
     app: platesearcher-api
   type: LoadBalancer
   ports:
-    - name: http
-      port: 80
+    - name: rest-api
+      port: 3500
       protocol: TCP

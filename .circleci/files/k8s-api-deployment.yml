@@ -25,5 +25,5 @@ spec:
         - image: docker.io/vanthios/platesearcher:latest
           name: platesearcher-api
           ports:
-            - containerPort: 3030
+            - containerPort: 3500
               name: rest-api
