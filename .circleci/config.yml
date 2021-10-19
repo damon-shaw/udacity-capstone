@@ -319,6 +319,7 @@ jobs:
             kubectl apply -f .circleci/files/k8s-lb-service.yml
             kubectl apply -f .circleci/files/k8s-api-deployment.yml
             kubectl get all -n platesearcher
+            kubectl get svc platesearcher-lb
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
@@ -456,9 +457,9 @@ workflows:
           requires: [deploy-infrastructure]
       - deploy-frontend:
           requires: [deploy-infrastructure]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
