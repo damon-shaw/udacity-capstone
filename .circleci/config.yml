@@ -228,7 +228,8 @@ jobs:
               --region us-east-1 \
               --with-oidc \
               --ssh-access \
-              --ssh-public-key platesearcher
+              --ssh-public-key platesearcher \
+              --zones us-east-1a,us-east-1b,us-east-1c,us-east-1d
       # - run:
       #     name: Get Back-end IP Address
       #     command: |
