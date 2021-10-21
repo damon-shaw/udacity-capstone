@@ -303,6 +303,7 @@ jobs:
           command: |
             yum install -y git
             yum install -y tar
+            yum install -y gettext
             curl -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
             chmod +x /usr/local/bin/kubectl
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
@@ -315,12 +316,17 @@ jobs:
       - run:
           name: Deploy backend
           command: |
+            export CONTAINER_TAG=${CIRCLE_SHA1}
+            export DB_HOST=${DB_HOST}
+            export DB_NAME=${DB_NAME}
+            export DB_USER=${DB_USER}
+            export DB_PASS=${DB_PASS}
             kubectl get nodes -o wide
             kubectl create namespace platesearcher
             kubectl apply -f .circleci/files/k8s-lb-service.yml
-            kubectl apply -f .circleci/files/k8s-api-deployment.yml
+            cat .circleci/files/k8s-api-deployment.yml | envsubst | kubectl apply -f -
             kubectl get all -n platesearcher
-            kubectl get svc platesearcher-lb
+            kubectl get svc platesearcher-lb -n platesearcher
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
