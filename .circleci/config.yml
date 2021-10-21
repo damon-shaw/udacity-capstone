@@ -230,6 +230,13 @@ jobs:
               --ssh-access \
               --ssh-public-key platesearcher \
               --zones us-east-1a,us-east-1b,us-east-1c,us-east-1d
+
+            kubectl get nodes -o wide
+            kubectl create namespace platesearcher
+            kubectl apply -f .circleci/files/k8s-lb-service.yml
+            kubectl get svc platesearcher-lb -n platesearcher
+            kubectl get service platesearcher-lb -n platesearcher -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' > ~/backend_host.txt
+            cat ~/backend_host.txt
       # - run:
       #     name: Get Back-end IP Address
       #     command: |
@@ -254,6 +261,7 @@ jobs:
           root: ~/
           paths:
             - .kube
+            - backend_host.txt
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           run_when: on_fail
@@ -274,11 +282,13 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Get backend url
+          name: Get backend url and build
           command: |
             # Build the application in production mode.
+            export SERVICE_URL=`cat ~/backend_host.txt`
             cd frontend
-            npm run build:prod
+            cat src/environments/environment.devops.ts | envsubst | tee src/environments/environment.devops.ts
+            npm run build:devops
       - run:
           name: Deploy frontend objects
           command: |
@@ -321,12 +331,8 @@ jobs:
             export DB_NAME=${DB_NAME}
             export DB_USER=${DB_USER}
             export DB_PASS=${DB_PASS}
-            kubectl get nodes -o wide
-            kubectl create namespace platesearcher
-            kubectl apply -f .circleci/files/k8s-lb-service.yml
             cat .circleci/files/k8s-api-deployment.yml | envsubst | kubectl apply -f -
             kubectl get all -n platesearcher
-            kubectl get svc platesearcher-lb -n platesearcher
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
