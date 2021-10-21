@@ -299,6 +299,11 @@ app.get('/state/:state/charset', async (req, res) => {
     }
 });
 
+app.get('/status', (req, res) => {
+    res.status(HttpStatus.OK);
+    res.send('I\'m alive!');
+});
+
 connectToDatabase(db).then(() => {
     app.listen(PORT, () => {
         console.log(`Server is listening on port ${PORT}.`)
