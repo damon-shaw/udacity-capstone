@@ -239,7 +239,16 @@ jobs:
             kubectl create namespace platesearcher
             kubectl apply -f .circleci/files/k8s-lb-service.yml
             kubectl get svc platesearcher-lb -n platesearcher
+
+            export SERVICE_URL=""
+            while [ -z $SERVICE_URL ]; do
+              echo "Waiting for load balancer IP..."
+              export SERVICE_URL=`kubectl get service platesearcher-lb -n platesearcher -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
+              [ -z "$SERVICE_URL" ] && sleep 10
+            done
+            echo "Detected an external IP for the load balancer."
             kubectl get service platesearcher-lb -n platesearcher -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' > ~/backend_host.txt
+
             cat ~/backend_host.txt
       # - run:
       #     name: Get Back-end IP Address
@@ -301,10 +310,8 @@ jobs:
             cd frontend
             # Copy the build products to the S3 bucket.
             # The CloudFormation script provided uses "platesearcher-${ID}".
-            aws s3 cp --recursive dist "s3://platesearcher-${CIRCLE_WORKFLOW_ID}"
+            aws s3 cp --recursive dist/PlateSearch "s3://platesearcher-${CIRCLE_WORKFLOW_ID}"
       # Here's where you will add some code to rollback on failure
-      - revert-migrations:
-          run_when: on_fail
       - destroy-environment:
           run_when: on_fail   
                     
@@ -342,13 +349,13 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       # - revert-migrations:
       #     run_when: on_fail
-      # - destroy-environment:
-      #     run_when: on_fail 
+      - destroy-environment:
+          run_when: on_fail 
 
   smoke-test:
     docker:
       # Lightweight Docker image 
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli:latest
     steps:
       # Checkout code from git
       - checkout
@@ -357,18 +364,22 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible curl
-            apk add --update rsync openssh
-            # Install NodeJS and NPM in case we need to revert migrations.
-            apk add --update nodejs npm
-            # Install AWS CLI through pip. Doing this through cURL doesn't work well.
-            pip install awscli
-            aws --version
+            yum install -y git
+            yum install -y tar
+            yum install -y gettext
+            yum install -y curl
+            curl -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+            chmod +x /usr/local/bin/kubectl
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            mv /tmp/eksctl /usr/local/bin/eksctl
+            chmod +x /usr/local/bin/eksctl
+            eksctl version
+            kubectl version --short --client
       - run:
           name: Backend smoke test.
           command: |
             export SERVICE_URL=`cat ~/backend_host.txt`
-            curl "http://$BACKEND_IP_ADDR:3500/status" | grep "I'm alive!"
+            curl "http://$SERVICE_URL:3500/status" | grep "I'm alive!"
       - run:
           name: Frontend smoke test.
           command: |
