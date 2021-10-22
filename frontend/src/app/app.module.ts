@@ -28,7 +28,7 @@ import { FavoritePlatesComponent } from './components/favorite-plates/favorite-p
 import { SettingsComponent } from './components/settings/settings.component';
 import { NoneFoundBannerComponent } from './components/none-found-banner/none-found-banner.component';
 
-export function StartupServiceFactory(startupService: ConfigService) {
+export function startupServiceFactory(startupService: ConfigService): () => Promise<any> {
   return () => startupService.init();
 }
 
@@ -65,7 +65,7 @@ export function StartupServiceFactory(startupService: ConfigService) {
       ConfigService,
       {
           provide: APP_INITIALIZER,
-          useFactory: StartupServiceFactory,
+          useFactory: startupServiceFactory,
           deps: [ConfigService],
           multi: true
       }
