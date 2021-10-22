@@ -28,6 +28,10 @@ import { FavoritePlatesComponent } from './components/favorite-plates/favorite-p
 import { SettingsComponent } from './components/settings/settings.component';
 import { NoneFoundBannerComponent } from './components/none-found-banner/none-found-banner.component';
 
+export function StartupServiceFactory(startupService: ConfigService) {
+  return () => startupService.init();
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,10 +62,10 @@ import { NoneFoundBannerComponent } from './components/none-found-banner/none-fo
     AppRoutingModule
   ],
   providers: [
-      AppComponent,
+      ConfigService,
       {
           provide: APP_INITIALIZER,
-          useFactory: (service: ConfigService) => service.init(),
+          useFactory: StartupServiceFactory,
           deps: [ConfigService],
           multi: true
       }

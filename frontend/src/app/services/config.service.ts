@@ -29,21 +29,22 @@ export class ConfigService {
         // Check the local storage to see if a state has already been selected.
         // If there isn't one in local storage, default to Virginia.
         if(!localStorage.getItem(STATE_KEY))
-            this.setState('VA');
+            await this.setState('VA');
         else
             this.selectedState = localStorage.getItem(STATE_KEY);
 
         console.log('Starting the configuration service!');
+        return;
     }
 
-    public setState(state: string): void {
+    public async setState(state: string): Promise<void> {
         // Set the selected state in local storage.
         localStorage.setItem(STATE_KEY, state);
 
         this.selectedState = state;
 
         // Retrieve the allowable chara
-        this.getAllowableCharacters();
+        await this.getAllowableCharacters();
     }
 
     public getState(): string {
