@@ -7,31 +7,10 @@ const logger = require('./config/logging');
 
 const Plate = require('./models/Plate');
 const AllowableCharacters = require('./models/AllowableCharacters');
-// const db = require('./config/database');
+const db = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3500;
-
-const Sequelize = require('sequelize');
-const db = new Sequelize(
-    process.env.DB_NAME || 'plates',
-    process.env.DB_USER || 'root',
-    process.env.DB_PASS || 'bitnami',
-    {
-        host: process.env.DB_HOST || 'localhost',
-        dialect: 'mysql',
-        port: 3306,
-        operatorAliases: false,
-        logging: false,
-
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
-        }
-    }
-);
 
 
 const HttpStatus = require('http-status-codes');
