@@ -359,8 +359,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -375,6 +373,8 @@ jobs:
             chmod +x /usr/local/bin/eksctl
             eksctl version
             kubectl version --short --client
+      - attach_workspace:
+          at: ~/
       - run:
           name: Backend smoke test.
           command: |
