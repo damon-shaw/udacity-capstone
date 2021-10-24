@@ -54,8 +54,6 @@ Screenshots showcasing failed and successful linting steps in the pipeline can b
 
 ### Perform Builds on your Pipeline
 Screenshots showcasing failed and successful builds can be found in the `screenshots/pipeline/build` directory. The following files are in this directory:
-  * `failed_build_frontend.png`: A pipeline build that failed due to some error in the front-end code.
-  * `failed_build_backend.png`: A pipeline build that failed due to some error in the back-end code.
   * `successful_build.png`: A pipeline build that successfully completed all steps.
 
 Screenshots showcasing the active deployment can be found in the `screenshots/deployment` directory. The following files are in this directory:
